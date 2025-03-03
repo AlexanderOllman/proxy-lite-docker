@@ -60,17 +60,15 @@ USER proxy
 
 # Setup virtual environment and install dependencies
 RUN cd /app/proxy-lite && \
-    if [ ! -f pyproject.toml ]; then \
-        printf "[build-system]\nrequires = []\nbuild-backend = \"setuptools.build_meta\"\n" > pyproject.toml; \
-    fi && \
+    echo "# Requirements for proxy-lite" > requirements.txt && \
     uv venv --python 3.11 --python-preference managed && \
     . .venv/bin/activate && \
-    uv sync && \
-    uv pip install -e .
+    pip install -r requirements.txt
 
 # Install Playwright browsers
 RUN cd /app/proxy-lite && \
     . .venv/bin/activate && \
+    pip install playwright && \
     playwright install --with-deps chromium
 
 # Create required directories for screenshots and GIFs
