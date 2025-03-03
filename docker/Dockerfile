@@ -4,6 +4,8 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
+# Set UV cache directory to a location the proxy user can write to
+ENV UV_CACHE_DIR=/home/proxy/.cache/uv
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -49,6 +51,9 @@ RUN pip install --no-cache-dir uv
 # Create app directory and set permissions
 WORKDIR /app
 COPY --chown=proxy:proxy ./proxy-lite /app/proxy-lite
+
+# Create cache directory for uv and set proper permissions
+RUN mkdir -p /home/proxy/.cache/uv && chown -R proxy:proxy /home/proxy/.cache
 
 # Switch to the proxy user
 USER proxy
