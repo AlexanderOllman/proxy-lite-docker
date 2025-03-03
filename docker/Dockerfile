@@ -41,7 +41,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
-RUN useradd -m -s /bin/bash proxy
+RUN id -u proxy &>/dev/null || useradd -m -s /bin/bash proxy
 
 # Create app directory and set permissions
 WORKDIR /app

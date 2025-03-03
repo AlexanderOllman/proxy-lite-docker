@@ -12,9 +12,15 @@ echo "Building proxy-lite-docker..."
 cd "$WORKSPACE_DIR"
 
 # Build the Docker image
-docker build -t proxy-lite-docker -f docker/Dockerfile .
+docker build -t fheonix/proxy-lite-docker:0.0.1 -f docker/Dockerfile .
+# docker build -t proxy-lite-docker -f docker/Dockerfile .
 
 echo "Docker image built successfully: proxy-lite-docker"
+echo ""
+echo "Pushing the image to Docker Hub..."
+# Check if the image exists in Docker Hub and push it if it does not exist
+docker push fheonix/proxy-lite-docker:0.0.1
+echo "Image pushed successfully to Docker Hub"
 echo ""
 echo "To run the container:"
 echo "docker run -p 8000:8000 proxy-lite-docker"
