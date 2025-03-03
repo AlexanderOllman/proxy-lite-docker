@@ -60,6 +60,7 @@ USER proxy
 
 # Setup virtual environment and install dependencies
 RUN cd /app/proxy-lite && \
+    [ -f pyproject.toml ] || echo "[build-system]\nrequires = []\nbuild-backend = \"setuptools.build_meta\"" > pyproject.toml && \
     uv venv --python 3.11 --python-preference managed && \
     . .venv/bin/activate && \
     uv sync && \
