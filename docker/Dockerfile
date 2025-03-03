@@ -47,9 +47,8 @@ RUN id -u proxy &>/dev/null || useradd -m -s /bin/bash proxy
 WORKDIR /app
 COPY --chown=proxy:proxy ./proxy-lite /app/proxy-lite
 
-# Create a requirements.txt file with necessary packages
-RUN echo "playwright==1.41.0" > /app/proxy-lite/requirements.txt && \
-    chown proxy:proxy /app/proxy-lite/requirements.txt
+# Copy requirements.txt
+COPY --chown=proxy:proxy ./requirements.txt /app/requirements.txt
 
 # Create directories for output
 RUN mkdir -p /app/proxy-lite/screenshots /app/proxy-lite/gifs && \
@@ -63,7 +62,7 @@ RUN cd /app/proxy-lite && \
     python -m venv .venv && \
     . .venv/bin/activate && \
     pip install --upgrade pip && \
-    pip install -r requirements.txt && \
+    pip install -r /app/requirements.txt && \
     playwright install --with-deps chromium
 
 # Set up API server script and entrypoint

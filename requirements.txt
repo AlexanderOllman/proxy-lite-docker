@@ -1,0 +1,19 @@
+omegaconf
+openai
+opencv-python
+opencv-python-headless
+playwright-stealth
+playwright
+pydantic
+rich
+setuptools
+tenacity
+torch
+torchvision
+streamlit
+pre-commit
+# API server dependencies
+aiohttp
+# Optional serving dependencies
+transformers
+vllm 
