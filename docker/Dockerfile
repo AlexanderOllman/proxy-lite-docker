@@ -61,13 +61,13 @@ USER proxy
 # Setup virtual environment and install dependencies
 RUN cd /app/proxy-lite && \
     uv venv --python 3.11 --python-preference managed && \
-    source .venv/bin/activate && \
+    . .venv/bin/activate && \
     uv sync && \
     uv pip install -e .
 
 # Install Playwright browsers
 RUN cd /app/proxy-lite && \
-    source .venv/bin/activate && \
+    . .venv/bin/activate && \
     playwright install --with-deps chromium
 
 # Create required directories for screenshots and GIFs
