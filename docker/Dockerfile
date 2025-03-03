@@ -43,15 +43,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Create a non-root user
 RUN id -u proxy &>/dev/null || useradd -m -s /bin/bash proxy
 
+# Install uv for better Python package management
+RUN pip install --no-cache-dir uv
+
 # Create app directory and set permissions
 WORKDIR /app
 COPY --chown=proxy:proxy ./proxy-lite /app/proxy-lite
 
 # Switch to the proxy user
 USER proxy
-
-# Install uv for better Python package management
-RUN pip install --no-cache-dir uv
 
 # Setup virtual environment and install dependencies
 RUN cd /app/proxy-lite && \
