@@ -63,13 +63,13 @@ RUN cd /app/proxy-lite && \
     echo "# Requirements for proxy-lite" > requirements.txt && \
     uv venv --python 3.11 --python-preference managed && \
     . .venv/bin/activate && \
-    pip install -r requirements.txt
+    python -m pip install --user -r requirements.txt
 
 # Install Playwright browsers
 RUN cd /app/proxy-lite && \
     . .venv/bin/activate && \
-    pip install playwright && \
-    playwright install --with-deps chromium
+    python -m pip install --user playwright && \
+    python -m playwright install --with-deps chromium
 
 # Create required directories for screenshots and GIFs
 RUN mkdir -p /app/proxy-lite/screenshots /app/proxy-lite/gifs
