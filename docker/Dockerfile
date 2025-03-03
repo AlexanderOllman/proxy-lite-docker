@@ -4,8 +4,6 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
-# Set UV cache directory to a location the proxy user can write to
-ENV UV_CACHE_DIR=/home/proxy/.cache/uv
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -45,42 +43,36 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Create a non-root user
 RUN id -u proxy &>/dev/null || useradd -m -s /bin/bash proxy
 
-# Install uv for better Python package management
-RUN pip install --no-cache-dir uv
-
 # Create app directory and set permissions
 WORKDIR /app
 COPY --chown=proxy:proxy ./proxy-lite /app/proxy-lite
 
-# Create cache directory for uv and set proper permissions
-RUN mkdir -p /home/proxy/.cache/uv && chown -R proxy:proxy /home/proxy/.cache
+# Create a requirements.txt file with necessary packages
+RUN echo "playwright==1.41.0" > /app/proxy-lite/requirements.txt && \
+    chown proxy:proxy /app/proxy-lite/requirements.txt
 
-# Switch to the proxy user
+# Create directories for output
+RUN mkdir -p /app/proxy-lite/screenshots /app/proxy-lite/gifs && \
+    chown -R proxy:proxy /app/proxy-lite
+
+# Switch to the proxy user for installations
 USER proxy
 
-# Setup virtual environment and install dependencies
+# Create and activate virtual environment, install requirements
 RUN cd /app/proxy-lite && \
-    echo "# Requirements for proxy-lite" > requirements.txt && \
-    uv venv --python 3.11 --python-preference managed && \
+    python -m venv .venv && \
     . .venv/bin/activate && \
-    python -m pip install --user -r requirements.txt
+    pip install --upgrade pip && \
+    pip install -r requirements.txt && \
+    playwright install --with-deps chromium
 
-# Install Playwright browsers
-RUN cd /app/proxy-lite && \
-    . .venv/bin/activate && \
-    python -m pip install --user playwright && \
-    python -m playwright install --with-deps chromium
-
-# Create required directories for screenshots and GIFs
-RUN mkdir -p /app/proxy-lite/screenshots /app/proxy-lite/gifs
-
-# Set up API server script
+# Set up API server script and entrypoint
+USER root
 COPY --chown=proxy:proxy ./docker/api_server.py /app/
 COPY --chown=proxy:proxy ./docker/entrypoint.sh /app/
-
-# Make the entrypoint script executable
-USER root
 RUN chmod +x /app/entrypoint.sh
+
+# Switch back to proxy user for running the application
 USER proxy
 
 # Expose port for API
