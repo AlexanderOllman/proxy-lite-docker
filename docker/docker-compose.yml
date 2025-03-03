@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  proxy-lite:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: proxy-lite
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_API=${MODEL_API:-https://convergence-ai-demo-api.hf.space/v1}
+      - MODEL_ID=${MODEL_ID:-convergence-ai/proxy-lite-3b}
+      - VIEWPORT_WIDTH=${VIEWPORT_WIDTH:-1280}
+      - VIEWPORT_HEIGHT=${VIEWPORT_HEIGHT:-1920}
+      - HOMEPAGE=${HOMEPAGE:-https://www.google.com}
+      - HEADLESS=${HEADLESS:-true}
+    volumes:
+      - proxy-lite-data:/app/proxy-lite/screenshots
+      - proxy-lite-gifs:/app/proxy-lite/gifs
+    restart: unless-stopped
+
+volumes:
+  proxy-lite-data:
+  proxy-lite-gifs: 
