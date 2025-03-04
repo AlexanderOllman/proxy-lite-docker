@@ -7,7 +7,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV XDG_CONFIG_HOME=/app/.config
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PIP_NO_CACHE_DIR=1
-ENV HOME=/home/proxy
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -44,37 +43,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user
-RUN id -u proxy &>/dev/null || useradd -m -s /bin/bash proxy
-
-# Create app directory and set permissions
+# Create workdir and config directories
 WORKDIR /app
-COPY --chown=proxy:proxy ./proxy-lite /app/proxy-lite
+RUN mkdir -p /app/.config /app/proxy-lite/screenshots /app/proxy-lite/gifs
 
-# Copy requirements.txt
-COPY --chown=proxy:proxy ./requirements.txt /app/requirements.txt
-
-# Create directories for output and config
-RUN mkdir -p /app/proxy-lite/screenshots /app/proxy-lite/gifs /app/.config && \
-    chown -R proxy:proxy /app/proxy-lite /app/.config
-
-# Switch to the proxy user for installations
-USER proxy
-
-# Install requirements directly from requirements.txt
-RUN pip install --user --upgrade pip && \
-    pip install --user -r /app/requirements.txt && \
-    pip install --user -e /app/proxy-lite && \
-    PATH=$HOME/.local/bin:$PATH PYTHONPATH=/app/proxy-lite/src playwright install --with-deps chromium
-
-# Set up API server script and entrypoint
-USER root
-COPY --chown=proxy:proxy ./docker/api_server.py /app/
-COPY --chown=proxy:proxy ./docker/entrypoint.sh /app/
+# Copy files
+COPY ./proxy-lite /app/proxy-lite
+COPY ./requirements.txt /app/requirements.txt
+COPY ./docker/api_server.py /app/
+COPY ./docker/entrypoint.sh /app/
 RUN chmod +x /app/entrypoint.sh
 
-# Switch back to proxy user for running the application
+# Install Python packages as root
+RUN pip install -r /app/requirements.txt && \
+    pip install -e /app/proxy-lite && \
+    playwright install --with-deps chromium
+
+# Create a non-root user for running the app
+RUN useradd -m -s /bin/bash proxy
+RUN chown -R proxy:proxy /app /home/proxy
+
+# Switch to proxy user for running the application
 USER proxy
+ENV HOME=/home/proxy
 
 # Expose port for API
 EXPOSE 8000
