@@ -15,6 +15,5 @@ pre-commit
 # API server dependencies
 aiohttp
 pillow
-# Optional serving dependencies
-transformers
-vllm 
+# Transformers (keeping this but removing vllm)
+transformers 

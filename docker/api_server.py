@@ -256,13 +256,27 @@ def main():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     
-    # Run the loop in a daemon thread
-    thread = threading.Thread(target=loop.run_forever, daemon=True)
-    thread.start()
+    # Initialize the global task manager
+    global task_manager
+    task_manager = ProxyLiteTaskStatus()
     
-    # Run the HTTP server in the main thread
-    run_server()
+    # Create a thread that runs the event loop
+    def run_event_loop():
+        loop.run_forever()
+    
+    loop_thread = threading.Thread(target=run_event_loop, daemon=True)
+    loop_thread.start()
+    
+    # Start the HTTP server
+    try:
+        run_server()
+    except KeyboardInterrupt:
+        print("Shutting down server...")
+    finally:
+        loop.call_soon_threadsafe(loop.stop)
+        loop_thread.join(timeout=1.0)
+        loop.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main() 

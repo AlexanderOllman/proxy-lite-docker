@@ -4,6 +4,7 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
+ENV XDG_CONFIG_HOME=/app/.config
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -50,9 +51,9 @@ COPY --chown=proxy:proxy ./proxy-lite /app/proxy-lite
 # Copy requirements.txt
 COPY --chown=proxy:proxy ./requirements.txt /app/requirements.txt
 
-# Create directories for output
-RUN mkdir -p /app/proxy-lite/screenshots /app/proxy-lite/gifs && \
-    chown -R proxy:proxy /app/proxy-lite
+# Create directories for output and config
+RUN mkdir -p /app/proxy-lite/screenshots /app/proxy-lite/gifs /app/.config && \
+    chown -R proxy:proxy /app/proxy-lite /app/.config
 
 # Switch to the proxy user for installations
 USER proxy
@@ -64,7 +65,7 @@ RUN cd /app/proxy-lite && \
     pip install --upgrade pip && \
     pip install -r /app/requirements.txt && \
     pip install -e /app/proxy-lite && \
-    playwright install --with-deps chromium
+    PYTHONPATH=/app/proxy-lite/src playwright install --with-deps chromium
 
 # Set up API server script and entrypoint
 USER root
