@@ -10,7 +10,7 @@ import time
 import threading
 
 # Ensure that our proxy-lite package is in the path
-sys.path.append('/app/proxy-lite')
+sys.path.append('/app/proxy-lite/src')
 
 from proxy_lite import Runner, RunnerConfig
 from proxy_lite.gif_maker import create_run_gif

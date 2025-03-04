@@ -14,6 +14,7 @@ streamlit
 pre-commit
 # API server dependencies
 aiohttp
+pillow
 # Optional serving dependencies
 transformers
 vllm 

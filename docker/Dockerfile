@@ -63,6 +63,7 @@ RUN cd /app/proxy-lite && \
     . .venv/bin/activate && \
     pip install --upgrade pip && \
     pip install -r /app/requirements.txt && \
+    pip install -e /app/proxy-lite && \
     playwright install --with-deps chromium
 
 # Set up API server script and entrypoint
