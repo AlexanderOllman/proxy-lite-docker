@@ -9,7 +9,7 @@ export PROXY_LITE_VIEWPORT_HEIGHT=${VIEWPORT_HEIGHT:-1920}
 export PROXY_LITE_HOMEPAGE=${HOMEPAGE:-https://www.google.com}
 export PROXY_LITE_HEADLESS=${HEADLESS:-true}
 
-# Set PYTHONPATH to include the src directory
+# Ensure PYTHONPATH includes the source directory
 export PYTHONPATH=/app/proxy-lite/src:$PYTHONPATH
 
 # Print configuration
