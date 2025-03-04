@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# Source the Python virtual environment
-source /app/proxy-lite/.venv/bin/activate
-
 # Set environment variables from Docker arguments
 export PROXY_LITE_API_BASE=${MODEL_API:-https://convergence-ai-demo-api.hf.space/v1}
 export PROXY_LITE_MODEL=${MODEL_ID:-convergence-ai/proxy-lite-3b}
