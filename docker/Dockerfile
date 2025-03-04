@@ -7,6 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV XDG_CONFIG_HOME=/app/.config
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PIP_NO_CACHE_DIR=1
+ENV HOME=/home/proxy
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -60,23 +61,11 @@ RUN mkdir -p /app/proxy-lite/screenshots /app/proxy-lite/gifs /app/.config && \
 # Switch to the proxy user for installations
 USER proxy
 
-# Install base requirements first (faster packages)
-RUN python -m pip install --upgrade pip && \
-    python -m pip install setuptools wheel
-
-# Install requirements in two steps to avoid timeouts
-RUN pip install omegaconf openai pydantic rich tenacity aiohttp pillow pre-commit
-
-# Install larger packages separately
-RUN pip install torch torchvision
-RUN pip install opencv-python opencv-python-headless
-RUN pip install streamlit transformers
-RUN pip install playwright playwright-stealth
-
-# Install the proxy-lite package and playwright browsers
-RUN cd /app/proxy-lite && \
-    pip install -e . && \
-    PYTHONPATH=/app/proxy-lite/src playwright install --with-deps chromium
+# Install requirements directly from requirements.txt
+RUN pip install --user --upgrade pip && \
+    pip install --user -r /app/requirements.txt && \
+    pip install --user -e /app/proxy-lite && \
+    PATH=$HOME/.local/bin:$PATH PYTHONPATH=/app/proxy-lite/src playwright install --with-deps chromium
 
 # Set up API server script and entrypoint
 USER root

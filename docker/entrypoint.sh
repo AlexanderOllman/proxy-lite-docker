@@ -9,6 +9,9 @@ export PROXY_LITE_VIEWPORT_HEIGHT=${VIEWPORT_HEIGHT:-1920}
 export PROXY_LITE_HOMEPAGE=${HOMEPAGE:-https://www.google.com}
 export PROXY_LITE_HEADLESS=${HEADLESS:-true}
 
+# Add user's local Python packages to PATH
+export PATH=$HOME/.local/bin:$PATH
+
 # Set PYTHONPATH to include the src directory
 export PYTHONPATH=/app/proxy-lite/src:$PYTHONPATH
 
@@ -20,6 +23,7 @@ echo "Viewport: ${PROXY_LITE_VIEWPORT_WIDTH}x${PROXY_LITE_VIEWPORT_HEIGHT}"
 echo "Homepage: $PROXY_LITE_HOMEPAGE"
 echo "Headless: $PROXY_LITE_HEADLESS"
 echo "PYTHONPATH: $PYTHONPATH"
+echo "PATH: $PATH"
 
 # Start API server
 exec python /app/api_server.py 

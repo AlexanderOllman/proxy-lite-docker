@@ -248,7 +248,11 @@ def run_server(server_class=HTTPServer, handler_class=ProxyLiteAPIHandler, port=
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     print(f'Starting Proxy-Lite API server on port {port}...')
-    httpd.serve_forever()
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print('Shutting down server...')
+        httpd.server_close()
 
 
 def main():
@@ -269,7 +273,9 @@ def main():
     
     # Start the HTTP server
     try:
-        run_server()
+        port = int(os.environ.get('PORT', 8000))
+        print(f"Initializing Proxy-Lite API Server on port {port}...")
+        run_server(port=port)
     except KeyboardInterrupt:
         print("Shutting down server...")
     finally:
