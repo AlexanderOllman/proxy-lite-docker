@@ -5,23 +5,15 @@ set -e
 
 echo "Checking file structure..."
 
+# Flag to track if any check fails
+ANY_CHECK_FAILED=false
+
 # Check if pyproject.toml exists in proxy-lite
 if [ -f "proxy-lite/pyproject.toml" ]; then
     echo "✅ proxy-lite/pyproject.toml exists"
 else
     echo "❌ proxy-lite/pyproject.toml MISSING"
-    echo "Creating minimal pyproject.toml file..."
-    mkdir -p proxy-lite
-    cat > proxy-lite/pyproject.toml << EOL
-[build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "proxy-lite"
-version = "0.0.1"
-EOL
-    echo "✅ Created minimal pyproject.toml"
+    ANY_CHECK_FAILED=true
 fi
 
 # Check if src directory exists in proxy-lite
@@ -29,8 +21,7 @@ if [ -d "proxy-lite/src" ]; then
     echo "✅ proxy-lite/src directory exists"
 else
     echo "❌ proxy-lite/src directory MISSING"
-    mkdir -p proxy-lite/src
-    echo "✅ Created proxy-lite/src directory"
+    ANY_CHECK_FAILED=true
 fi
 
 # Check if Dockerfile exists
@@ -52,6 +43,29 @@ if [ -f "requirements.txt" ]; then
     echo "✅ requirements.txt exists"
 else
     echo "❌ requirements.txt MISSING"
+fi
+
+# If any check failed, remove proxy-lite directory and clone from GitHub
+if [ "$ANY_CHECK_FAILED" = true ]; then
+    echo ""
+    echo "Some checks failed. Removing proxy-lite directory and cloning fresh from GitHub..."
+    
+    # Remove existing proxy-lite directory if it exists
+    if [ -d "proxy-lite" ]; then
+        rm -rf proxy-lite
+        echo "Removed existing proxy-lite directory"
+    fi
+    
+    # Clone the repository from GitHub
+    echo "Cloning proxy-lite from GitHub..."
+    git clone https://github.com/convergence-ai/proxy-lite.git
+    
+    if [ $? -eq 0 ]; then
+        echo "✅ Successfully cloned proxy-lite repository"
+    else
+        echo "❌ Failed to clone repository. Please check your internet connection and try again."
+        exit 1
+    fi
 fi
 
 echo ""
