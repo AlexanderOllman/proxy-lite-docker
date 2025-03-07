@@ -55,7 +55,20 @@ RUN pip install -r /app/requirements.txt
 # Now copy the proxy-lite package
 COPY ./proxy-lite /app/proxy-lite
 
-# Install proxy-lite in development mode
+# Debugging - List files in proxy-lite directory to verify pyproject.toml exists
+RUN ls -la /app/proxy-lite/
+
+# Install proxy-lite in development mode - if pyproject.toml is missing, create a minimal one
+RUN if [ ! -f /app/proxy-lite/pyproject.toml ]; then \
+    echo "Creating minimal pyproject.toml file"; \
+    echo '[build-system]' > /app/proxy-lite/pyproject.toml && \
+    echo 'requires = ["setuptools>=42", "wheel"]' >> /app/proxy-lite/pyproject.toml && \
+    echo 'build-backend = "setuptools.build_meta"' >> /app/proxy-lite/pyproject.toml && \
+    echo '[project]' >> /app/proxy-lite/pyproject.toml && \
+    echo 'name = "proxy-lite"' >> /app/proxy-lite/pyproject.toml && \
+    echo 'version = "0.0.1"' >> /app/proxy-lite/pyproject.toml; \
+    fi
+
 WORKDIR /app/proxy-lite
 RUN pip install -e . && \
     playwright install --with-deps chromium

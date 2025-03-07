@@ -1,5 +1,5 @@
-# Git directories
-.git/
+# Git directories - but do not exclude any needed project files
+.git
 
 # Exclude common unnecessary files
 __pycache__/
@@ -31,6 +31,8 @@ ENV/
 .idea/
 .vscode/
 
-# BUT make sure to include pyproject.toml in proxy-lite directory
+# NEVER exclude these critical files
 !proxy-lite/pyproject.toml
-!proxy-lite/src/ 
+!proxy-lite/src/
+!proxy-lite/README.md
+!requirements.txt 
