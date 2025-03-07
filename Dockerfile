@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV XDG_CONFIG_HOME=/app/.config
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PIP_NO_CACHE_DIR=1
-ENV PYTHONPATH=/app/proxy-lite/src:$PYTHONPATH
+ENV PYTHONPATH=/app/proxy-lite/src
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \

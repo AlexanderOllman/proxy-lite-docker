@@ -1,0 +1,36 @@
+# Git directories
+.git/
+
+# Exclude common unnecessary files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Cache and IDE files
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+.idea/
+.vscode/
+
+# BUT make sure to include pyproject.toml in proxy-lite directory
+!proxy-lite/pyproject.toml
+!proxy-lite/src/ 
